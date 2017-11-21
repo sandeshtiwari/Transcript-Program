@@ -40,4 +40,8 @@ public class StudentTranscript
          System.err.println("Exception: " + e.getMessage());
       }
    }
+   public String getName()
+   {
+      return this.name;
+   }
 }
