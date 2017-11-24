@@ -1,14 +1,30 @@
+/**
+Name- Sandesh Tiwari
+CSCI 4055 Programming assgnment
+Dr.Lon Smith
+Due - 11/25/2017
+This program lets user to calculate the transcript of a student with a given CWID from the UNIVERSITY database
+**/
+//importing the standard for SQL 
 import java.sql.*;
 public class StudentTranscript
 {
+   //instance variables
    private String name;
    private int CWID;
+   //connection variable for the database
    private Connection con = null;
+/**
+Constructor to initialize the instance variables after establishing a connection to the database
+@param CWID the CWID of the given student
+**/
    public StudentTranscript(int CWID)
    {
       try
       {
+         //loading the driver for the JDBC
          Class.forName("com.mysql.jdbc.Driver").newInstance();
+         //establishing connection
          con = DriverManager.getConnection("jdbc:mysql:///UNIVERSITY", "tiwaris1", "CSCI4055");
          String query = "select Fname, Lname from PERSON, STUDENT where PERSON.CWID = STUDENT.CWID and PERSON.CWID ="+ CWID;
          Statement stmt = con.createStatement();
@@ -26,20 +42,30 @@ public class StudentTranscript
          }
          stmt.close();
       }
+      //catch if exception
       catch(Exception e)
       {
          System.err.println("Exception: " + e.getMessage());
       }
    }
+   /**
+   Method to return the name of the student
+   @return name of the student
+   **/
    public String getName()
    {
       return this.name;
    }
+   /**
+   Method to give the grades for all the semester studied by the student
+   **/
    public void showSemGrades()
    {
       try 
       {
+         //query string to get the semesters and the GPA for the respective semester
          String semQuery = "select round(avg(GRADE),2) as GPA, Semester, Year from TAKEN where CWID ="+ this.CWID + " group by Year, Semester;";
+         //query string to calculate the total number of semesters studied by the student
          String number = "select count(Semester) as num from (select Semester from TAKEN where CWID ="+this.CWID+" group by Year, Semester) as nested;";
          Statement stmt = con.createStatement();
          ResultSet result = stmt.executeQuery(number);
@@ -47,34 +73,44 @@ public class StudentTranscript
          {
             int countSem = result.getInt("num");
             result = stmt.executeQuery(semQuery);
+            //looping for all the semsters
             for(int i = 0; i < countSem; i++)
             {
                if(result.next())
                {
                   String currentSem = result.getString("Semester");
                   String currentYear = result.getString("Year");
+                  //getting grade for a particular semester
                   this.oneSemGrade(currentSem, currentYear);
+                  //printing the GPA for a particular semester
                   System.out.println(currentSem+", "+currentYear+ "'s GPA -- "+result.getString("GPA")+"\n");
                }
             }
-         
          }
       }
+      //catch exception 
       catch(Exception e)
       {
          System.err.println("Exception: " + e.getMessage());
       }
    
    }
+   /**
+   Method to get grade of a given semester term and year
+   @param sem the term for the semester
+   @param year the given year
+   **/
    public void oneSemGrade(String sem, String year)
    {
       try
       {
          System.out.println(sem+ ", "+year);
+         //query string to get the classes taken in a particular semester
          String query = "select distinct SECTION_DETAILS.Title, TAKEN.Grade, SECTION_DETAILS.Prefix, SECTION_DETAILS.Number from TAKEN, SECTION_DETAILS"
             +" where TAKEN.CRN = SECTION_DETAILS.CRN and TAKEN.CWID ="+ this.CWID+" and TAKEN.Semester = '"+sem+"' and TAKEN.Year ="+year+" order by TAKEN.Year, TAKEN.Semester;";
          Statement statement = con.createStatement();
          ResultSet result = statement.executeQuery(query);
+         //looping for all the classes in a particular semester
          while(result.next())
          {
             String title = result.getString("Title");
@@ -94,15 +130,21 @@ public class StudentTranscript
          }
          result.close();
       }
+      //catch exception
       catch(Exception e)
       {
          System.err.println("Exception: "+ e.getMessage());
       }
    }
+   /**
+   Method to return the cumulative GPA of a student
+   @return cumulative GPA 
+   */
    public double getTotalGPA()
    {
       try
       {
+         //query string to get the cumulative GPA for a particular student
          String query = "select round(avg(GRADE),2) as 'GPA' from TAKEN where CWID = "+ this.CWID+";";
          Statement statement = con.createStatement();
          ResultSet result = statement.executeQuery(query);
@@ -113,12 +155,17 @@ public class StudentTranscript
          else
             return 0.0;
       }
+      //catch exception
       catch(Exception e)
       {
          System.err.println("Exception: "+e.getMessage());
          return 0.0;
       }
    }
+   /**
+   Method to return the Major's GPA of a student
+   @return major's GPA 
+   */
    public double getMajorGPA()
    {
       try
@@ -138,12 +185,16 @@ public class StudentTranscript
          System.err.println("Exception: here"+e.getMessage());
          return 0.0;
       }
-   
    }
+   /**
+   Method to return the Major of a student
+   @return Major of a student
+   **/
    public String getMajor()
    {
       try
       {
+         //query string to get the major of a student
          String query = "select MjrCode from MAJOR where CWID = "+this.CWID+";";
          Statement statement = con.createStatement();
          ResultSet result = statement.executeQuery(query);
@@ -160,6 +211,9 @@ public class StudentTranscript
          return "Not a Student or not valid CWID";
       }
    }
+   /**
+   Method to give the complete transcript of a student
+   **/
    public void getTranscript()
    {
       System.out.println("\nName -- "+getName()+"\n");
