@@ -107,5 +107,25 @@ public class StudentTranscript
          System.err.println("Exception: "+ e.getMessage());
       }
    }
+   public double getTotalGPA()
+   {
+      try
+      {
+         String query = "select round(avg(GRADE),2) as 'GPA' from TAKEN where CWID = "+ this.CWID+";";
+         Statement statement = con.createStatement();
+         ResultSet result = statement.executeQuery(query);
+         if(result.next())
+         {
+            return result.getDouble("GPA");
+         }
+         else
+            return 0.0;
+      }
+      catch(Exception e)
+      {
+         System.err.println("Exception: "+e.getMessage());
+         return 0.0;
+      }
+   }
 
 }
