@@ -127,5 +127,46 @@ public class StudentTranscript
          return 0.0;
       }
    }
-
+   public double getMajorGPA()
+   {
+      try
+      {
+         String query = "select round(avg(TAKEN.Grade),2) as 'GPA' from TAKEN, SECTION_DETAILS where TAKEN.CRN = SECTION_DETAILS.CRN and TAKEN.CWID = "+this.CWID+" and SECTION_DETAILS.Prefix = '"+this.getMajor()+"';";
+         Statement statement = con.createStatement();
+         ResultSet result = statement.executeQuery(query);
+         if(result.next())
+         {
+            return result.getDouble("GPA");
+         }
+         else
+            return 0.0;
+      }
+      catch(Exception e)
+      {
+         System.err.println("Exception: here"+e.getMessage());
+         return 0.0;
+      }
+   
+   }
+   public String getMajor()
+   {
+      try
+      {
+         String query = "select MjrCode from MAJOR where CWID = "+this.CWID+";";
+         Statement statement = con.createStatement();
+         ResultSet result = statement.executeQuery(query);
+         if(result.next())
+         {
+            return result.getString("MjrCode");
+         }
+         else
+            return "Not a Student or not valid CWID";
+      }
+      catch(Exception e)
+      {
+         System.err.println("Exception: "+e.getMessage());
+         return "Not a Student or not valid CWID";
+      }
+   }
+   
 }

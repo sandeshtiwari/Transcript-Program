@@ -6,5 +6,6 @@ public class Transcript
       System.out.println(student.getName());
       student.showSemGrades();
       System.out.println(student.getTotalGPA());
+      System.out.println(student.getMajorGPA());
    }
 }
