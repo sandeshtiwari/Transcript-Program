@@ -26,13 +26,6 @@ public class StudentTranscript
          
          }
          stmt.close();
-         /*try
-         {
-            if(con != null)
-               con.close();
-         } 
-         catch(SQLException e) {}
-      */
       }
       catch(Exception e)
       {
@@ -62,7 +55,7 @@ public class StudentTranscript
                   String currentSem = result.getString("Semester");
                   String currentYear = result.getString("Year");
                   this.oneSemGrade(currentSem, currentYear);
-                  System.out.println("Semester's gpa is "+ result.getString("GPA"));
+                  System.out.println(currentSem+", "+currentYear+ "'s GPA -- "+result.getString("GPA")+"\n");
                }
             }
          
@@ -168,5 +161,12 @@ public class StudentTranscript
          return "Not a Student or not valid CWID";
       }
    }
-   
+   public void getTranscript()
+   {
+      System.out.println("\nName -- "+getName()+"\n");
+      showSemGrades();
+      System.out.println("Total GPA --"+getTotalGPA());
+      System.out.println("Major GPA --"+getMajorGPA()+"\n");
+   }
+
 }
