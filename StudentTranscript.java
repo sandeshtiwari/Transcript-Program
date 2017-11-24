@@ -4,7 +4,6 @@ public class StudentTranscript
    private String name;
    private int CWID;
    private Connection con = null;
-   private Statement stmt;
    public StudentTranscript(int CWID)
    {
       try
@@ -12,7 +11,7 @@ public class StudentTranscript
          Class.forName("com.mysql.jdbc.Driver").newInstance();
          con = DriverManager.getConnection("jdbc:mysql:///UNIVERSITY", "tiwaris1", "CSCI4055");
          String query = "select Fname, Lname from PERSON, STUDENT where PERSON.CWID = STUDENT.CWID and PERSON.CWID ="+ CWID;
-         stmt = con.createStatement();
+         Statement stmt = con.createStatement();
          ResultSet result = stmt.executeQuery(query);
          if(!result.next())
          {
@@ -42,7 +41,7 @@ public class StudentTranscript
       {
          String semQuery = "select round(avg(GRADE),2) as GPA, Semester, Year from TAKEN where CWID ="+ this.CWID + " group by Year, Semester;";
          String number = "select count(Semester) as num from (select Semester from TAKEN where CWID ="+this.CWID+" group by Year, Semester) as nested;";
-         stmt = con.createStatement();
+         Statement stmt = con.createStatement();
          ResultSet result = stmt.executeQuery(number);
          if(result.next())
          {
@@ -91,7 +90,7 @@ public class StudentTranscript
                letterGrade = "C";
             else if(grade < 2)
                letterGrade = "F";
-            System.out.println(prefix+" "+ number +" "+title+ " "+ letterGrade);   
+            System.out.println(prefix+" "+ number +" "+title+ " -- "+ letterGrade);   
          }
          result.close();
       }
