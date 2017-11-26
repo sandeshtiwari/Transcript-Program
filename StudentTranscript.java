@@ -64,7 +64,7 @@ Constructor to initialize the instance variables after establishing a connection
       try 
       {
          //query string to get the semesters and the GPA for the respective semester
-         String semQuery = "select round(avg(GRADE),2) as GPA, Semester, Year from TAKEN where CWID ="+ this.CWID + " group by Year, Semester;";
+         String semQuery = "select round(sum(TAKEN.GRADE * SECTION_DETAILS.Hours)/sum(SECTION_DETAILS.Hours),2) as 'GPA', TAKEN.Semester, TAKEN.Year from TAKEN, SECTION_DETAILS where TAKEN.CWID ="+ this.CWID + " group by TAKEN.Year, TAKEN.Semester;";
          //query string to calculate the total number of semesters studied by the student
          String number = "select count(Semester) as num from (select Semester from TAKEN where CWID ="+this.CWID+" group by Year, Semester) as nested;";
          Statement stmt = con.createStatement();
@@ -145,7 +145,7 @@ Constructor to initialize the instance variables after establishing a connection
       try
       {
          //query string to get the cumulative GPA for a particular student
-         String query = "select round(avg(GRADE),2) as 'GPA' from TAKEN where CWID = "+ this.CWID+";";
+         String query = "select round(sum(TAKEN.GRADE * SECTION_DETAILS.Hours)/sum(SECTION_DETAILS.Hours), 2) as 'GPA' from TAKEN, SECTION_DETAILS where TAKEN.CRN = SECTION_DETAILS.CRN and TAKEN.CWID = "+ this.CWID+";";
          Statement statement = con.createStatement();
          ResultSet result = statement.executeQuery(query);
          if(result.next())
@@ -170,7 +170,8 @@ Constructor to initialize the instance variables after establishing a connection
    {
       try
       {
-         String query = "select round(avg(TAKEN.Grade),2) as 'GPA' from TAKEN, SECTION_DETAILS where TAKEN.CRN = SECTION_DETAILS.CRN and TAKEN.CWID = "+this.CWID+" and SECTION_DETAILS.Prefix = '"+this.getMajor()+"';";
+         String query = "select round(sum(TAKEN.GRADE * SECTION_DETAILS.Hours)/sum(SECTION_DETAILS.Hours), 2) as 'GPA'"
+         +" from TAKEN, SECTION_DETAILS where TAKEN.CRN = SECTION_DETAILS.CRN and TAKEN.CWID = "+this.CWID+" and SECTION_DETAILS.Prefix = '"+this.getMajor()+"';";
          Statement statement = con.createStatement();
          ResultSet result = statement.executeQuery(query);
          if(result.next())
