@@ -64,7 +64,7 @@ Constructor to initialize the instance variables after establishing a connection
       try 
       {
          //query string to get the semesters and the GPA for the respective semester
-         String semQuery = "select round(sum(TAKEN.GRADE * SECTION_DETAILS.Hours)/sum(SECTION_DETAILS.Hours),2) as 'GPA', TAKEN.Semester, TAKEN.Year from TAKEN, SECTION_DETAILS where TAKEN.CWID ="+ this.CWID + " group by TAKEN.Year, TAKEN.Semester;";
+         String semQuery = "select round(sum(TAKEN.GRADE * SECTION_DETAILS.Hours)/sum(SECTION_DETAILS.Hours),2) as 'GPA', TAKEN.Semester, TAKEN.Year from TAKEN, SECTION_DETAILS where TAKEN.CWID ="+ this.CWID + " group by TAKEN.Year, TAKEN.Semester order by TAKEN.Year, TAKEN.Semester;";
          //query string to calculate the total number of semesters studied by the student
          String number = "select count(Semester) as num from (select Semester from TAKEN where CWID ="+this.CWID+" group by Year, Semester) as nested;";
          Statement stmt = con.createStatement();
